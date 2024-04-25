@@ -33,11 +33,7 @@ export default class App extends React.Component {
         this.setState(({ todoData }) => {
             return {
                 todoData: todoData.map((e) => {
-                    if (typeof flag === 'undefined' || e.done === flag) {
-                        e.visible = true;
-                    } else {
-                        e.visible = false;
-                    }
+                    e.visible = typeof flag === 'undefined' || e.done === flag;
                     return e;
                 })
             };
@@ -79,8 +75,7 @@ export default class App extends React.Component {
         const newItem = { ...oldItem, [propName]: !oldItem[propName] };
         const before = arr.slice(0, idx);
         const after = arr.slice(idx + 1);
-        const ret = [...before, newItem, ...after];
-        return ret;
+        return [...before, newItem, ...after];
     }
 
     onToggleEditing = (id) => {
@@ -101,8 +96,7 @@ export default class App extends React.Component {
 
     render() {
         const { todoData } = this.state;
-        const doneCount = todoData.filter((el) => el.done).length;
-        const todoCount = todoData.length - doneCount;
+        const todoCount = todoData.filter((el) => !el.done).length;
         return (
             <section className="todoapp">
                 <NewTaskForm newItemAdded={this.addItem} />

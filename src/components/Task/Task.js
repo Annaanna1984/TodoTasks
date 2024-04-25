@@ -40,13 +40,6 @@ export default class Task extends React.Component {
 }
 
 Task.propTypes = {
-    todo: PropTypes.shape({
-        id: PropTypes.number,
-        label: PropTypes.string,
-        done: PropTypes.bool,
-        editing: PropTypes.bool,
-        createDate: PropTypes.instanceOf(Date)
-    }),
     id: PropTypes.number,
     label: PropTypes.string,
     done: PropTypes.bool,
@@ -59,5 +52,13 @@ Task.propTypes = {
 };
 
 Task.defaultProps = {
-    todo: {}
+    id: 0,
+    label: '',
+    done: false,
+    editing: false,
+    createDate: new Date(),
+    onDeleted: () => {},
+    onToggleDone: () => {},
+    editItem: () => {},
+    onToggleEditing: () => {}
 };

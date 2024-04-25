@@ -33,5 +33,10 @@ TaskList.propTypes = {
     onToggleEditing: PropTypes.func.isRequired
 };
 TaskList.defaultProps = {
-    todos: {}
+    todos: {},
+    onDeleted: () => {},
+    onToggleDone: () => {},
+    editItem: () => {},
+    id: 0,
+    onToggleEditing: () => {}
 };

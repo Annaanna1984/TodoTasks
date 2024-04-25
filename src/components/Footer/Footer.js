@@ -22,3 +22,8 @@ Footer.propTypes = {
     setVisibility: PropTypes.func.isRequired,
     done: PropTypes.number
 };
+Footer.defaultProps = {
+    clearCompleted: () => {},
+    setVisibility: () => {},
+    done: false
+};

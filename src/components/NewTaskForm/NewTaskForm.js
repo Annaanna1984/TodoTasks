@@ -17,6 +17,7 @@ export default class NewTaskForm extends React.Component {
             label: ''
         });
     };
+
     render() {
         return (
             <header className="header">
@@ -27,6 +28,8 @@ export default class NewTaskForm extends React.Component {
                         placeholder="What needs to be done?"
                         onChange={this.onLabelChange}
                         value={this.state.label}
+                        required={true}
+                        pattern=".*\S.*"
                     />
                 </form>
             </header>
@@ -35,12 +38,9 @@ export default class NewTaskForm extends React.Component {
 }
 
 NewTaskForm.propTypes = {
-    placeholder: PropTypes.string,
-    title: PropTypes.string,
     newItemAdded: PropTypes.func.isRequired
 };
 
 NewTaskForm.defaultProps = {
-    placeholder: 'What needs to be done?',
-    title: 'Todos'
+    newItemAdded: () => {}
 };

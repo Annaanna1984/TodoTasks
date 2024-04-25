@@ -27,11 +27,9 @@ export default class TasksFilter extends React.Component {
 }
 
 TasksFilter.propTypes = {
-    done: PropTypes.bool,
-    filter: PropTypes.string,
     setVisibility: PropTypes.func.isRequired
 };
 
 TasksFilter.defaultProps = {
-    filter: 'All'
+    setVisibility: () => {}
 };
