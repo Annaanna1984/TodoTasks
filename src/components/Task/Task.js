@@ -18,6 +18,7 @@ export default class Task extends React.Component {
                     }}
                     type="text"
                     className="edit"
+                    pattern=".*\S.*"
                 />
             </form>
         ) : (
