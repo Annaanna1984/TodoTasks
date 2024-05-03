@@ -2,7 +2,7 @@ import React from 'react';
 import Task from '../Task';
 import PropTypes from 'prop-types';
 
-const TaskList = ({ todos, onDeleted, onToggleDone, onToggleEditing, editItem }) => {
+const TaskList = ({ todos, onDeleted, onToggleDone, onToggleEditing, toggleTimer, editItem }) => {
     const elements = todos
         .filter((e) => e.visible)
         .map((item) => {
@@ -15,6 +15,8 @@ const TaskList = ({ todos, onDeleted, onToggleDone, onToggleEditing, editItem })
                         onDeleted={onDeleted}
                         onToggleDone={() => onToggleDone(id)}
                         onToggleEditing={() => onToggleEditing(id)}
+                        pauseTimer={() => toggleTimer(id, true)}
+                        unpauseTimer={() => toggleTimer(id, false)}
                         editItem={editItem}
                     />
                 </li>
@@ -30,7 +32,8 @@ TaskList.propTypes = {
     onToggleDone: PropTypes.func.isRequired,
     editItem: PropTypes.func.isRequired,
     id: PropTypes.number,
-    onToggleEditing: PropTypes.func.isRequired
+    onToggleEditing: PropTypes.func.isRequired,
+    toggleTimer: PropTypes.func.isRequired
 };
 TaskList.defaultProps = {
     todos: {},

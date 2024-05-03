@@ -9,7 +9,7 @@ export default class App extends React.Component {
         todoData: []
     };
 
-    createTodoItem(label) {
+    createTodoItem(label, min, sec) {
         return {
             label,
             important: false,
@@ -17,9 +17,31 @@ export default class App extends React.Component {
             done: false,
             visible: true,
             createDate: new Date(),
-            editing: false
+            editing: false,
+            timer: min * 60 + Number(sec),
+            paused: true
         };
     }
+
+    toggleTimer = (id, flag) => {
+        this.setState(({ todoData }) => ({
+            todoData: todoData.map((e) => {
+                if (e.id === id) e.paused = flag;
+                return e;
+            })
+        }));
+    };
+
+    tick = () => {
+        this.setState(({ todoData }) => ({
+            todoData: todoData.map((e) => {
+                if (e.timer === 0) e.paused = true;
+                else if (!e.done && !e.paused) e.timer--;
+                return e;
+            })
+        }));
+        setTimeout(this.tick, 1000);
+    };
 
     clearCompleted = () => {
         this.setState(({ todoData }) => {
@@ -50,8 +72,8 @@ export default class App extends React.Component {
         });
     };
 
-    addItem = (text) => {
-        const newItem = this.createTodoItem(text);
+    addItem = (text, min, sec) => {
+        const newItem = this.createTodoItem(text, min, sec);
         this.setState(({ todoData }) => {
             const newArr = [...todoData, newItem];
             return {
@@ -69,30 +91,30 @@ export default class App extends React.Component {
         }));
     };
 
-    toggleProperty(arr, id, propName) {
-        const idx = arr.findIndex((el) => el.id === id);
-        const oldItem = arr[idx];
-        const newItem = { ...oldItem, [propName]: !oldItem[propName] };
-        const before = arr.slice(0, idx);
-        const after = arr.slice(idx + 1);
-        return [...before, newItem, ...after];
-    }
-
     onToggleEditing = (id) => {
-        this.setState(({ todoData }) => {
-            return {
-                todoData: this.toggleProperty(todoData, id, 'editing')
-            };
-        });
+        this.setState(({ todoData }) => ({
+            todoData: todoData.map((element) => {
+                if (element.id === id) element.editing = !element.editing;
+                return element;
+            })
+        }));
     };
 
     onToggleDone = (id) => {
-        this.setState(({ todoData }) => {
-            return {
-                todoData: this.toggleProperty(todoData, id, 'done')
-            };
-        });
+        this.setState(({ todoData }) => ({
+            todoData: todoData.map((element) => {
+                if (element.id === id) {
+                    element.done = !element.done;
+                    element.paused = true;
+                }
+                return element;
+            })
+        }));
     };
+
+    componentDidMount() {
+        this.tick();
+    }
 
     render() {
         const { todoData } = this.state;
@@ -104,9 +126,9 @@ export default class App extends React.Component {
                     <TaskList
                         todos={todoData}
                         onDeleted={this.deleteItem}
-                        onAdded={this.addItem}
                         onToggleDone={this.onToggleDone}
                         onToggleEditing={this.onToggleEditing}
+                        toggleTimer={this.toggleTimer}
                         editItem={this.editItem.bind(this)}
                     />
                     <Footer done={todoCount} setVisibility={this.setVisibility} clearCompleted={this.clearCompleted} />
