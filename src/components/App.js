@@ -6,7 +6,8 @@ import React from 'react';
 export default class App extends React.Component {
     maxId = 100;
     state = {
-        todoData: []
+        todoData: [],
+        timerId: null
     };
 
     createTodoItem(label, min, sec) {
@@ -23,16 +24,37 @@ export default class App extends React.Component {
         };
     }
 
-    toggleTimer = (id, flag) => {
-        this.setState(({ todoData }) => ({
-            todoData: todoData.map((e) => {
-                if (e.id === id) e.paused = flag;
-                return e;
-            })
-        }));
+    toggleTimer = (id, paused) => {
+        const todoData = this.state.todoData;
+
+        this.setState(
+            () => ({
+                todoData: todoData.map((e) => {
+                    if (e.id === id) e.paused = paused;
+                    return e;
+                })
+            }),
+            () => {
+                if (this.state.timerId === null && !paused) {
+                    this.setState({
+                        timerId: setTimeout(this.tick, 1000)
+                    });
+                } else if (paused) {
+                    const pausedCount = todoData.filter((e) => e.paused).length;
+                    if (pausedCount === todoData.length) {
+                        clearTimeout(this.state.timerId);
+                        this.setState({
+                            timerId: null
+                        });
+                    }
+                }
+            }
+        );
     };
 
     tick = () => {
+        if (this.state.timerId === null) return;
+
         this.setState(({ todoData }) => ({
             todoData: todoData.map((e) => {
                 if (e.timer === 0) e.paused = true;
@@ -101,20 +123,18 @@ export default class App extends React.Component {
     };
 
     onToggleDone = (id) => {
-        this.setState(({ todoData }) => ({
-            todoData: todoData.map((element) => {
-                if (element.id === id) {
-                    element.done = !element.done;
-                    element.paused = true;
-                }
-                return element;
-            })
-        }));
+        this.setState(
+            ({ todoData }) => ({
+                todoData: todoData.map((element) => {
+                    if (element.id === id) {
+                        element.done = !element.done;
+                    }
+                    return element;
+                })
+            }),
+            () => this.toggleTimer(id, true)
+        );
     };
-
-    componentDidMount() {
-        this.tick();
-    }
 
     render() {
         const { todoData } = this.state;

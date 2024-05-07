@@ -80,8 +80,8 @@ export default class Task extends React.Component {
                 <label htmlFor={`${id}`}>
                     <span className={done ? 'title' : ''}>{label}</span>
                     <span className="description">
-                        <button className="icon icon-play" onClick={unpauseTimer} />
-                        <button className="icon icon-pause" onClick={pauseTimer} />
+                        <button className="icon icon-play" onClick={!done ? unpauseTimer : () => {}} />
+                        <button className="icon icon-pause" onClick={!done ? pauseTimer : () => {}} />
                         {this.formatTimer(timer)}
                     </span>
                     <span className="description">
