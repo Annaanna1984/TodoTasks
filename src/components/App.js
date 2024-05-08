@@ -85,13 +85,16 @@ export default class App extends React.Component {
     };
 
     deleteItem = (id) => {
-        this.setState(({ todoData }) => {
-            const idx = todoData.findIndex((el) => el.id === id);
-            const newArr = [...todoData.slice(0, idx), ...todoData.slice(idx + 1)];
-            return {
-                todoData: newArr
-            };
-        });
+        this.setState(
+            ({ todoData }) => {
+                const idx = todoData.findIndex((el) => el.id === id);
+                const newArr = [...todoData.slice(0, idx), ...todoData.slice(idx + 1)];
+                return {
+                    todoData: newArr
+                };
+            },
+            () => this.toggleTimer(id, true)
+        );
     };
 
     addItem = (text, min, sec) => {
