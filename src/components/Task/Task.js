@@ -1,13 +1,25 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import PropTypes from 'prop-types';
 
-export default class Task extends React.Component {
-    state = {
-        editedTitle: ''
-    };
+const Task = (props) => {
+    const [editedTitle, setEditedTitle] = useState('');
+    const {
+        onDeleted,
+        onToggleDone,
+        onToggleEditing,
+        pauseTimer,
+        unpauseTimer,
+        editItem,
+        createDate,
+        label,
+        id,
+        done,
+        editing,
+        timer
+    } = props;
 
-    formatTimer = (timer) => {
+    const formatTimer = (timer) => {
         const min = Math.floor(timer / 60);
         const sec = timer % 60;
         const minFormat = min >= 10 ? min : `0${min}`;
@@ -15,88 +27,70 @@ export default class Task extends React.Component {
         return `${minFormat}:${secFormat}`;
     };
 
-    handleEscPress = (e) => {
-        if (this.props.editing && e.key === 'Escape') {
-            e.preventDefault();
-            this.props.onToggleEditing(this.props.id);
-        }
-    };
+    useEffect(() => {
+        const handleEscPress = (e) => {
+            if (editing && e.key === 'Escape') {
+                e.preventDefault();
+                onToggleEditing(id);
+            }
+        };
 
-    handleClickOutside = (e) => {
-        if (this.props.editing && e.target.id !== 'edit_form') {
-            e.preventDefault();
-            this.props.onToggleEditing(this.props.id);
-        }
-    };
+        const handleClickOutside = (e) => {
+            if (editing && e.target.id !== 'edit_form') {
+                e.preventDefault();
+                onToggleEditing(id);
+            }
+        };
+        document.addEventListener('keydown', handleEscPress);
+        document.addEventListener('mousedown', handleClickOutside);
 
-    componentDidMount() {
-        document.addEventListener('keydown', this.handleEscPress);
-        document.addEventListener('mousedown', this.handleClickOutside);
-    }
+        return () => {
+            document.removeEventListener('keydown', handleEscPress);
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [editing, id, onToggleEditing]);
 
-    componentWillUnmount() {
-        document.removeEventListener('keydown', this.handleEscPress);
-        document.removeEventListener('mousedown', this.handleClickOutside);
-    }
-
-    render() {
-        const {
-            onDeleted,
-            onToggleDone,
-            onToggleEditing,
-            pauseTimer,
-            unpauseTimer,
-            editItem,
-            createDate,
-            label,
-            id,
-            done,
-            editing,
-            timer
-        } = this.props;
-        return editing ? (
-            <form
-                onSubmit={(event) => {
-                    event.preventDefault();
-                    onToggleEditing(id);
-                    editItem(id, this.state.editedTitle);
+    return editing ? (
+        <form
+            onSubmit={(event) => {
+                event.preventDefault();
+                onToggleEditing(id);
+                editItem(id, editedTitle);
+            }}
+        >
+            <input
+                id="edit_form"
+                onChange={(event) => {
+                    setEditedTitle(event.target.value);
                 }}
-            >
-                <input
-                    id="edit_form"
-                    onChange={(event) => {
-                        this.setState({
-                            editedTitle: event.target.value
-                        });
-                    }}
-                    type="text"
-                    className="edit"
-                    pattern=".*\S.*"
-                />
-            </form>
-        ) : (
-            <div className="view">
-                <input id={`${id}`} className="toggle" type="checkbox" onClick={onToggleDone} checked={done} readOnly />
-                <label htmlFor={`${id}`}>
-                    <span className={done ? 'title' : ''}>{label}</span>
-                    <span className="description">
-                        <button className="icon icon-play" onClick={!done ? unpauseTimer : () => {}} />
-                        <button className="icon icon-pause" onClick={!done ? pauseTimer : () => {}} />
-                        {this.formatTimer(timer)}
-                    </span>
-                    <span className="description">
-                        {formatDistanceToNow(createDate, {
-                            includeSeconds: true
-                        })}{' '}
-                        ago
-                    </span>
-                </label>
-                <button className="icon icon-edit" onClick={onToggleEditing} />
-                <button className="icon icon-destroy" onClick={() => onDeleted(id)} />
-            </div>
-        );
-    }
-}
+                type="text"
+                className="edit"
+                pattern=".*\S.*"
+            />
+        </form>
+    ) : (
+        <div className="view">
+            <input id={`${id}`} className="toggle" type="checkbox" onClick={onToggleDone} checked={done} readOnly />
+            <label htmlFor={`${id}`}>
+                <span className={done ? 'title' : ''}>{label}</span>
+                <span className="description">
+                    <button className="icon icon-play" onClick={!done ? unpauseTimer : () => {}} />
+                    <button className="icon icon-pause" onClick={!done ? pauseTimer : () => {}} />
+                    {formatTimer(timer)}
+                </span>
+                <span className="description">
+                    {formatDistanceToNow(createDate, {
+                        includeSeconds: true
+                    })}{' '}
+                    ago
+                </span>
+            </label>
+            <button className="icon icon-edit" onClick={onToggleEditing} />
+            <button className="icon icon-destroy" onClick={() => onDeleted(id)} />
+        </div>
+    );
+};
+export default Task;
 
 Task.propTypes = {
     id: PropTypes.number,

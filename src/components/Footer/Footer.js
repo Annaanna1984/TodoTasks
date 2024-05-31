@@ -2,20 +2,18 @@ import React from 'react';
 import TasksFilter from '../TaskFilter';
 import PropTypes from 'prop-types';
 
-export default class Footer extends React.Component {
-    render() {
-        const { done, setVisibility, clearCompleted } = this.props;
-        return (
-            <footer className="footer">
-                <span className="todo-count">{done} items left</span>
-                <TasksFilter setVisibility={setVisibility} />
-                <button className="clear-completed" onClick={clearCompleted}>
-                    Clear completed
-                </button>
-            </footer>
-        );
-    }
-}
+const Footer = ({ done, setVisibility, clearCompleted }) => {
+    return (
+        <footer className="footer">
+            <span className="todo-count">{done} items left</span>
+            <TasksFilter setVisibility={setVisibility} />
+            <button className="clear-completed" onClick={clearCompleted}>
+                Clear completed
+            </button>
+        </footer>
+    );
+};
+export default Footer;
 
 Footer.propTypes = {
     clearCompleted: PropTypes.func.isRequired,
