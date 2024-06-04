@@ -29,7 +29,7 @@ const App = () => {
     });
 
     const toggleTimer = (id, paused) => {
-        setTodoData(
+        setTodoData((todoData) =>
             todoData.map((e) => {
                 if (e.id === id) e.paused = paused;
                 return e;
@@ -40,8 +40,8 @@ const App = () => {
     const tick = () => {
         if (timerRef.current === null) return;
 
-        setTodoData((todoData) =>
-            todoData.map((e) => {
+        setTodoData((data) =>
+            data.map((e) => {
                 if (e.timer === 0) e.paused = true;
                 else if (!e.done && !e.paused) e.timer--;
                 return e;
@@ -52,11 +52,11 @@ const App = () => {
     };
 
     const clearCompleted = () => {
-        setTodoData(todoData.filter((e) => !e.done));
+        setTodoData((data) => data.filter((e) => !e.done));
     };
 
     const setVisibility = (flag) => {
-        setTodoData(
+        setTodoData((todoData) =>
             todoData.map((e) => {
                 e.visible = typeof flag === 'undefined' || e.done === flag;
                 return e;
@@ -65,16 +65,16 @@ const App = () => {
     };
 
     const deleteItem = (id) => {
-        setTodoData(todoData.filter((e) => e.id !== id));
+        setTodoData((todoData) => todoData.filter((e) => e.id !== id));
     };
 
     const addItem = (text, min, sec) => {
         const newItem = createTodoItem(text, min, sec);
-        setTodoData([...todoData, newItem]);
+        setTodoData((todoData) => [...todoData, newItem]);
     };
 
     const editItem = (id, text) => {
-        setTodoData(
+        setTodoData((todoData) =>
             todoData.map((element) => {
                 if (element.id === id) element.label = text;
                 return element;
@@ -83,7 +83,7 @@ const App = () => {
     };
 
     const onToggleEditing = (id) => {
-        setTodoData(
+        setTodoData((todoData) =>
             todoData.map((element) => {
                 if (element.id === id) element.editing = !element.editing;
                 return element;
@@ -92,7 +92,7 @@ const App = () => {
     };
 
     const onToggleDone = (id) => {
-        setTodoData(
+        setTodoData((todoData) =>
             todoData.map((element) => {
                 if (element.id === id) {
                     element.done = !element.done;
